@@ -34,6 +34,8 @@ export const metadata: Metadata = {
   },
 }
 
+export const dynamic = 'force-dynamic'
+
 const backgroundWords = [
   'اشترك الآن',
   'مشاهدة بلا تقطيع',
