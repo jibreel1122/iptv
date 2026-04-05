@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1400" viewBox="0 0 1000 1400" role="img" aria-label="FIFA World Cup">
+  <rect width="1000" height="1400" fill="#0a0a0a"/>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3d27a"/>
+      <stop offset="55%" stop-color="#c8922e"/>
+      <stop offset="100%" stop-color="#8e6420"/>
+    </linearGradient>
+  </defs>
+  <path d="M505 180c130 0 210 130 170 250-20 60-60 110-85 165-18 42-5 88 18 126 28 45 58 86 64 140 9 93-63 171-170 171-112 0-186-85-173-182 9-67 52-117 82-176 22-43 32-95 12-143-14-34-38-63-56-96-59-108 19-255 138-255z" fill="url(#gold)"/>
+  <rect x="410" y="1010" width="180" height="95" rx="16" fill="#166244"/>
+  <rect x="375" y="1100" width="250" height="45" rx="10" fill="#3b2a12"/>
+  <text x="500" y="1260" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-weight="900" font-size="120">FIFA</text>
+</svg>

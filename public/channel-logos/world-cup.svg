@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="World Cup">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a0033"/>
+      <stop offset="100%" stop-color="#9a0f4d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)" rx="56"/>
+  <path d="M430 750c90-100 90-260 0-360 90-150 280-150 370 0-90 100-90 260 0 360-90 150-280 150-370 0z" fill="#f7d37a"/>
+  <text x="730" y="520" fill="#fff" font-size="150" font-family="Segoe UI, Arial, sans-serif" font-weight="800">WORLD CUP</text>
+</svg>

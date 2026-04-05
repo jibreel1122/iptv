@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+
+# Sitemap
+Sitemap: https://studo-iptv.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
+Request-rate: 30/60
+
+# Bot specific rules
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Crawl-delay: 1

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="UEFA Champions League">
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <g fill="none" stroke="#001a70" stroke-width="22" transform="translate(390 90)">
+    <circle cx="410" cy="210" r="150"/>
+    <path d="M410 40l45 85 95 15-70 65 18 95-88-46-88 46 18-95-70-65 95-15z" fill="#001a70" stroke="none"/>
+  </g>
+  <text x="800" y="530" text-anchor="middle" fill="#001a70" font-size="80" font-family="Times New Roman, Georgia, serif" font-weight="700">UEFA</text>
+  <text x="800" y="670" text-anchor="middle" fill="#001a70" font-size="132" font-family="Times New Roman, Georgia, serif" font-weight="700" letter-spacing="5">CHAMPIONS</text>
+  <text x="800" y="820" text-anchor="middle" fill="#001a70" font-size="132" font-family="Times New Roman, Georgia, serif" font-weight="700" letter-spacing="5">LEAGUE</text>
+</svg>
