@@ -21,8 +21,14 @@ async function setupAdmin() {
   try {
     console.log('Setting up admin user...')
 
-    const email = 'admin@studo.com'
-    const password = 'admin123'
+    const email = process.env.ADMIN_EMAIL
+    const password = process.env.ADMIN_PASSWORD
+
+    if (!email || !password) {
+      console.error('ADMIN_EMAIL and ADMIN_PASSWORD are required for setup-admin.js')
+      process.exit(1)
+    }
+
     const passwordHash = hashPassword(password)
 
     // Check if admin already exists
@@ -42,11 +48,6 @@ async function setupAdmin() {
     `
 
     console.log('✓ Admin user created successfully')
-    console.log('')
-    console.log('Login Credentials:')
-    console.log(`  Email: ${email}`)
-    console.log(`  Password: ${password}`)
-    console.log('')
     console.log('Admin Dashboard: http://localhost:3000/admin/dashboard')
   } catch (error) {
     console.error('❌ Setup failed:', error)

@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/hooks/use-toast'
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('admin@studo.com')
-  const [password, setPassword] = useState('admin123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
@@ -66,7 +66,7 @@ export default function AdminLogin() {
             <Input
               id="email"
               type="email"
-              placeholder="admin@studo.com"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="bg-slate-900/50 border-purple-500/30 text-white"
@@ -97,12 +97,6 @@ export default function AdminLogin() {
             {loading ? 'جارٍ الدخول...' : 'تسجيل الدخول'}
           </Button>
         </form>
-
-        <div className="mt-6 p-4 bg-purple-900/20 rounded-lg border border-purple-500/20">
-          <p className="text-xs text-gray-400 mb-2">بيانات الدخول الافتراضية:</p>
-          <p className="text-xs text-gray-300">Email: admin@studo.com</p>
-          <p className="text-xs text-gray-300">Password: admin123</p>
-        </div>
       </Card>
     </div>
   )

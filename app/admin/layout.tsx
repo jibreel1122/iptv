@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Menu, X, LogOut } from 'lucide-react'
 
@@ -11,24 +11,34 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+  const pathname = usePathname()
+  const isLoginPage = pathname === '/admin/login'
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   useEffect(() => {
+    if (isLoginPage) {
+      setLoading(false)
+      return
+    }
     checkAuth()
-  }, [])
+  }, [isLoginPage])
 
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/admin/session')
-      if (response.ok) {
+      const data = await response.json().catch(() => ({ authenticated: false }))
+
+      if (response.ok && data?.authenticated === true) {
         setIsAuthenticated(true)
       } else {
-        router.push('/admin/login')
+        setIsAuthenticated(false)
+        router.replace('/admin/login')
       }
     } catch (error) {
-      router.push('/admin/login')
+      setIsAuthenticated(false)
+      router.replace('/admin/login')
     } finally {
       setLoading(false)
     }
@@ -37,6 +47,10 @@ export default function AdminLayout({
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' })
     router.push('/admin/login')
+  }
+
+  if (isLoginPage) {
+    return <>{children}</>
   }
 
   if (loading) {

@@ -324,13 +324,12 @@ async function migrate() {
     console.log('Inserted default themes')
   }
 
-  // Insert default admin user (password: admin123)
+  // Insert default admin user
   const adminExists = await sql`SELECT COUNT(*) FROM admin_users`
   if (adminExists[0].count === '0') {
-    // Using bcrypt hash of 'admin123'
-    const hash = '$2a$10$rQEY7pHKqKfJwS1J5Q0y0.x6mZVgV7VGOqPKKH3X3XKh9TqM9KBCy'
-    await sql`INSERT INTO admin_users (email, password_hash, name) VALUES ('admin@studo.com', ${hash}, 'Admin')`
-    console.log('Inserted default admin user (admin@studo.com / admin123)')
+    const hash = 'cacc5f9515869d03eede25a0515f6aa85122549d40052613d3da12f87fe14fd0'
+    await sql`INSERT INTO admin_users (email, password_hash, name) VALUES ('jibreelemad@gmail.com', ${hash}, 'Admin')`
+    console.log('Inserted default admin user')
   }
 
   console.log('Migration completed successfully!')

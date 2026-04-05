@@ -152,93 +152,14 @@ ALTER TABLE IF EXISTS themes DISABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS settings DISABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS admin_users DISABLE ROW LEVEL SECURITY;
 
--- Insert default stats
-INSERT INTO stats (channels, movies, series)
-SELECT 8000, 19000, 8500
-WHERE NOT EXISTS (SELECT 1 FROM stats);
-
--- Insert default features (only for missing positions)
-INSERT INTO features (title, description, position)
-SELECT v.title, v.description, v.position
-FROM (
-  VALUES
-    ('Works on all devices', 'Stream on phone, tablet, TV, and more', 0),
-    ('4K / HD quality', 'Watch in stunning HD and 4K resolution', 1),
-    ('No ads', 'Enjoy uninterrupted entertainment', 2),
-    ('Daily updates', 'Fresh content added every day', 3),
-    ('Multi-language', 'Available in multiple languages', 4),
-    ('Sports coverage', 'Live sports and exclusive events', 5)
-) AS v(title, description, position)
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM features f
-  WHERE f.position = v.position
-);
-
--- Insert default content categories (only for missing positions)
-INSERT INTO content_categories (name, description, position)
-SELECT v.name, v.description, v.position
-FROM (
-  VALUES
-    ('Movies', 'Stream thousands of movies', 0),
-    ('Series', 'Binge-watch your favorite series', 1),
-    ('Live TV', 'Watch live television channels', 2),
-    ('Sports', 'Live sports events and coverage', 3)
-) AS v(name, description, position)
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM content_categories c
-  WHERE c.position = v.position
-);
-
--- Insert default reviews (only for missing positions)
-INSERT INTO reviews (username, rating, text, position)
-SELECT v.username, v.rating, v.text, v.position
-FROM (
-  VALUES
-    ('user1234', 5, 'Amazing service! Works perfectly on all my devices.', 0),
-    ('user5678', 5, 'Best IPTV service I''ve ever used. Highly recommended!', 1),
-    ('user9012', 4, 'Great streaming quality and huge content library.', 2),
-    ('user3456', 5, 'Excellent support and fast streaming. Worth every penny.', 3),
-    ('user7890', 5, 'Crystal clear picture quality. Very happy with this!', 4)
-) AS v(username, rating, text, position)
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM reviews r
-  WHERE r.position = v.position
-);
-
--- Insert default themes (only for missing positions)
-INSERT INTO themes (name, description, position)
-SELECT v.name, v.description, v.position
-FROM (
-  VALUES
-    ('Sports', 'Sports themed particles', 0),
-    ('Cinema', 'Cinema themed particles', 1),
-    ('Celebration', 'Celebration themed particles', 2),
-    ('Custom', 'Custom user-uploaded particles', 3)
-) AS v(name, description, position)
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM themes t
-  WHERE t.position = v.position
-);
-
--- Insert default settings
-INSERT INTO settings (key, value, type, label, category) VALUES
-('hero_title', 'عيش الترفيه بجودة ممتازة', 'text', 'Hero Title', 'hero'),
-('hero_subtitle', 'شاهد آلاف القنوات والأفلام والمسلسلات بجودة 4K', 'textarea', 'Hero Subtitle', 'hero'),
-('hero_cta_text', 'اطلب الآن', 'text', 'Hero CTA', 'hero'),
-('brand_name', 'Studo', 'text', 'Brand Name', 'branding'),
-('whatsapp_number', '+970599765211', 'text', 'WhatsApp Number', 'contact')
-ON CONFLICT (key) DO UPDATE SET
-  value = EXCLUDED.value,
-  type = EXCLUDED.type,
-  label = EXCLUDED.label,
-  category = EXCLUDED.category,
-  updated_at = CURRENT_TIMESTAMP;
+-- NOTE:
+-- This script intentionally does NOT seed default stats/features/content/reviews/themes/settings.
+-- It only creates/migrates schema and keeps admin credentials up to date.
 
 -- Insert default admin user
+DELETE FROM admin_users WHERE email = 'admin@studo.com';
+
 INSERT INTO admin_users (email, password_hash)
-VALUES ('admin@studo.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('jibreelemad@gmail.com', 'cacc5f9515869d03eede25a0515f6aa85122549d40052613d3da12f87fe14fd0')
+ON CONFLICT (email) DO UPDATE SET
+  password_hash = EXCLUDED.password_hash;

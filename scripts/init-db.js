@@ -204,11 +204,14 @@ async function initializeDatabase() {
       console.log('✓ Inserted default settings')
     }
 
-    const adminCheck = await sql`SELECT COUNT(*) as count FROM admin_users`
-    if (adminCheck[0].count === 0) {
-      await sql`INSERT INTO admin_users (email, password_hash) VALUES ('admin@studo.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9')`
-      console.log('✓ Inserted default admin user')
-    }
+    await sql`DELETE FROM admin_users WHERE email = 'admin@studo.com'`
+    await sql`
+      INSERT INTO admin_users (email, password_hash)
+      VALUES ('jibreelemad@gmail.com', 'cacc5f9515869d03eede25a0515f6aa85122549d40052613d3da12f87fe14fd0')
+      ON CONFLICT (email)
+      DO UPDATE SET password_hash = EXCLUDED.password_hash
+    `
+    console.log('✓ Upserted admin user credentials')
 
     console.log('✅ Database initialization complete!')
   } catch (error) {

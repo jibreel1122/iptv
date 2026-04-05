@@ -5,6 +5,25 @@ import { cookies } from 'next/headers'
 import { hasDatabase } from '@/lib/db'
 import { getSupabaseServerClient, hasSupabasePublicConfig } from '@/lib/supabase-server'
 
+function verifyFallbackAdminCredentials(email: string, password: string): boolean {
+  const fallbackEmail = process.env.ADMIN_EMAIL
+  const fallbackPassword = process.env.ADMIN_PASSWORD
+  const fallbackPasswordHash = process.env.ADMIN_PASSWORD_HASH
+
+  if (!fallbackEmail) return false
+  if (email !== fallbackEmail) return false
+
+  if (fallbackPasswordHash) {
+    return verifyPassword(password, fallbackPasswordHash)
+  }
+
+  if (fallbackPassword) {
+    return password === fallbackPassword
+  }
+
+  return false
+}
+
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json()
@@ -40,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     if (!hasDatabase && !hasSupabasePublicConfig) {
-      if (email !== 'admin@studo.com' || password !== 'admin123') {
+      if (!verifyFallbackAdminCredentials(email, password)) {
         return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
       }
 

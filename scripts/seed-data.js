@@ -197,9 +197,9 @@ async function seed() {
   // Insert admin user if empty
   const adminCount = await sql`SELECT COUNT(*) FROM admin_users`
   if (adminCount[0].count === '0') {
-    const hash = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'
-    await sql`INSERT INTO admin_users (email, password_hash, name) VALUES ('admin@studo.com', ${hash}, 'Admin')`
-    console.log('Inserted admin user (admin@studo.com / admin123)')
+    const hash = 'cacc5f9515869d03eede25a0515f6aa85122549d40052613d3da12f87fe14fd0'
+    await sql`INSERT INTO admin_users (email, password_hash, name) VALUES ('jibreelemad@gmail.com', ${hash}, 'Admin')`
+    console.log('Inserted admin user')
   }
 
   console.log('Seeding completed successfully!')
