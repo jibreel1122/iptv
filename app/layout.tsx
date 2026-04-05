@@ -41,10 +41,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/logo.png', type: 'image/png', sizes: '32x32' },
+      { url: '/logo.png', type: 'image/png', sizes: '192x192' },
     ],
-    apple: '/apple-icon.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
 }
 
