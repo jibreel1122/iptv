@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface Order {
   id: number
@@ -27,6 +33,9 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [openNotes, setOpenNotes] = useState<string | null>(null)
+  const [openOrder, setOpenOrder] = useState<Order | null>(null)
+  const [draftStatuses, setDraftStatuses] = useState<Record<number, string>>({})
 
   useEffect(() => {
     fetchOrders()
@@ -69,7 +78,15 @@ export default function OrdersPage() {
         throw new Error(data?.error || 'Failed to fetch orders')
       }
 
-      setOrders(Array.isArray(data) ? data : [])
+      const nextOrders = Array.isArray(data) ? data : []
+      setOrders(nextOrders)
+      const nextDraftStatuses: Record<number, string> = {}
+      for (const order of nextOrders) {
+        if (order && typeof order.id === 'number') {
+          nextDraftStatuses[order.id] = String(order.status || 'pending')
+        }
+      }
+      setDraftStatuses(nextDraftStatuses)
     } catch (error) {
       console.error('Failed to fetch orders:', error)
       setOrders([])
@@ -100,6 +117,13 @@ export default function OrdersPage() {
     } finally {
       setUpdatingId(null)
     }
+  }
+
+  const statusLabel: Record<string, string> = {
+    pending: 'قيد الانتظار',
+    active: 'نشط',
+    done: 'مكتمل',
+    canceled: 'ملغي',
   }
 
   const deleteOrder = async (id: number) => {
@@ -193,6 +217,7 @@ export default function OrdersPage() {
                   >
                     {(() => {
                       const offer = getOrderOffer(order)
+                      const noteText = extractLegacyNotes(order.message)
                       return (
                         <>
                     <td className="px-6 py-4 text-sm text-gray-300">{order.id}</td>
@@ -200,28 +225,70 @@ export default function OrdersPage() {
                     <td className="px-6 py-4 text-sm text-gray-300">{order.whatsapp_number}</td>
                     <td className="px-6 py-4 text-sm text-gray-300">{offer.title}</td>
                     <td className="px-6 py-4 text-sm text-gray-300">₪{offer.price.toFixed(2)}</td>
-                    <td className="px-6 py-4 text-xs text-gray-400 max-w-[240px] truncate">{extractLegacyNotes(order.message) || '-'}</td>
+                    <td className="px-6 py-4 text-xs text-gray-400 max-w-[260px]">
+                      {noteText ? (
+                        <div className="flex items-center gap-2">
+                          <span className="truncate">{noteText}</span>
+                          <button
+                            type="button"
+                            onClick={() => setOpenNotes(noteText)}
+                            className="shrink-0 rounded border border-purple-400/40 px-2 py-1 text-[11px] text-purple-200 hover:bg-purple-500/20"
+                          >
+                            عرض
+                          </button>
+                        </div>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm">
-                      <select
-                        value={order.status || 'pending'}
-                        onChange={(e) => updateStatus(order.id, e.target.value)}
-                        disabled={updatingId === order.id}
-                        className="rounded-md border border-white/20 bg-slate-900 px-2 py-1 text-xs text-white"
-                      >
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="active">نشط</option>
-                        <option value="done">مكتمل</option>
-                        <option value="canceled">ملغي</option>
-                      </select>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={draftStatuses[order.id] || order.status || 'pending'}
+                          onChange={(e) =>
+                            setDraftStatuses((prev) => ({
+                              ...prev,
+                              [order.id]: e.target.value,
+                            }))
+                          }
+                          disabled={updatingId === order.id}
+                          className="rounded-md border border-white/20 bg-slate-900 px-2 py-1 text-xs text-white"
+                        >
+                          <option value="pending">قيد الانتظار</option>
+                          <option value="active">نشط</option>
+                          <option value="done">مكتمل</option>
+                          <option value="canceled">ملغي</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(order.id, draftStatuses[order.id] || order.status || 'pending')}
+                          disabled={
+                            updatingId === order.id ||
+                            (draftStatuses[order.id] || order.status || 'pending') === (order.status || 'pending')
+                          }
+                          className="rounded border border-emerald-400/40 px-2 py-1 text-[11px] text-emerald-200 hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          حفظ
+                        </button>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-400">{new Date(order.created_at).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm">
-                      <button
-                        onClick={() => deleteOrder(order.id)}
-                        className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700"
-                      >
-                        حذف
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setOpenOrder(order)}
+                          className="rounded border border-blue-400/40 px-3 py-1 text-blue-200 hover:bg-blue-500/20"
+                        >
+                          عرض كامل
+                        </button>
+                        <button
+                          onClick={() => deleteOrder(order.id)}
+                          className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700"
+                        >
+                          حذف
+                        </button>
+                      </div>
                     </td>
                         </>
                       )
@@ -233,6 +300,72 @@ export default function OrdersPage() {
           </table>
         </div>
       </motion.div>
+
+      <Dialog open={openNotes !== null} onOpenChange={(isOpen) => !isOpen && setOpenNotes(null)}>
+        <DialogContent className="bg-slate-900 border-purple-500/30 text-white sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>ملاحظات الطلب</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto rounded-md border border-white/10 bg-white/5 p-4 text-sm leading-7 text-gray-200 whitespace-pre-wrap break-words">
+            {openNotes || '-'}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openOrder !== null} onOpenChange={(isOpen) => !isOpen && setOpenOrder(null)}>
+        <DialogContent className="bg-slate-900 border-purple-500/30 text-white sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>تفاصيل الطلب كاملة</DialogTitle>
+          </DialogHeader>
+          {openOrder && (
+            <div className="space-y-3 text-sm">
+              {(() => {
+                const offer = getOrderOffer(openOrder)
+                const notes = extractLegacyNotes(openOrder.message)
+                const fullName = openOrder.full_name || extractLegacyName(openOrder.message) || '-'
+                return (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">Order ID</div>
+                        <div className="text-white font-medium mt-1">{openOrder.id}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">الاسم الكامل</div>
+                        <div className="text-white font-medium mt-1">{fullName}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">رقم واتساب</div>
+                        <div className="text-white font-medium mt-1">{openOrder.whatsapp_number}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">الحالة</div>
+                        <div className="text-white font-medium mt-1">{statusLabel[openOrder.status] || openOrder.status || '-'}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">الباقة</div>
+                        <div className="text-white font-medium mt-1">{offer.title}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3">
+                        <div className="text-white/50 text-xs">السعر</div>
+                        <div className="text-white font-medium mt-1">₪{offer.price.toFixed(2)}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3 sm:col-span-2">
+                        <div className="text-white/50 text-xs">التاريخ</div>
+                        <div className="text-white font-medium mt-1">{new Date(openOrder.created_at).toLocaleString()}</div>
+                      </div>
+                      <div className="rounded border border-white/10 bg-white/5 p-3 sm:col-span-2">
+                        <div className="text-white/50 text-xs">الملاحظات</div>
+                        <div className="text-white font-medium mt-1 whitespace-pre-wrap break-words">{notes || '-'}</div>
+                      </div>
+                    </div>
+                  </>
+                )
+              })()}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

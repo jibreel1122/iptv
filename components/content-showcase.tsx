@@ -79,6 +79,21 @@ const channelLocalFallbackByTitle: Record<string, string> = {
   'UEFA Champions League': '/channel-logos/champions-league.svg',
 }
 
+const forcedPosterByTitle: Record<string, string> = {
+  cukur:
+    'https://cdn-images.dzcdn.net/images/cover/7186ff74fa831b982a3cff3c212240eb/0x1900-000000-80-0-0.jpg',
+  'çukur':
+    'https://cdn-images.dzcdn.net/images/cover/7186ff74fa831b982a3cff3c212240eb/0x1900-000000-80-0-0.jpg',
+}
+
+const getForcedPoster = (title?: string) => {
+  const key = String(title || '').trim().toLowerCase()
+  if (key.includes('cukur') || key.includes('çukur')) {
+    return 'https://cdn-images.dzcdn.net/images/cover/7186ff74fa831b982a3cff3c212240eb/0x1900-000000-80-0-0.jpg'
+  }
+  return forcedPosterByTitle[key]
+}
+
 const curatedCategories: ShowcaseCategory[] = [
   {
     id: 'movies',
@@ -122,21 +137,18 @@ const curatedCategories: ShowcaseCategory[] = [
       { id: 'series-6', title: 'The Last of Us', description: 'Drama', year: '2023', rating: '8.7', image: 'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg' },
       { id: 'series-7', title: 'Peaky Blinders', description: 'Crime', year: '2013', rating: '8.8', image: 'https://image.tmdb.org/t/p/w500/vUUqzWa2LnHIVqkaKVlVGkVcZIW.jpg' },
       { id: 'series-8', title: 'The Sopranos', description: 'Crime Drama', year: '1999', rating: '9.2', image: 'https://image.tmdb.org/t/p/w500/rTc7ZXdroqjkKivFPvCPX0Ru7uw.jpg' },
-      { id: 'series-9', title: 'Better Call Saul', description: 'Crime Drama', year: '2015', rating: '9.0', image: 'https://image.tmdb.org/t/p/w500/fC2HDm5t0kHl7M2jzk6xM5Ziswr.jpg' },
+      { id: 'series-9', title: 'Better Call Saul', description: 'Crime Drama', year: '2015', rating: '9.0', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlZudogDC96zcQ8h1btvghFoM6Y7qQd94UNUyceBqXslnarv260_Ij7QEvSp_FNmldAci5&s=10' },
       { id: 'series-10', title: 'Vikings', description: 'Historical Drama', year: '2013', rating: '8.5', image: 'https://image.tmdb.org/t/p/w500/bQLrHIRNEkE3PdIWQrZHynQZazu.jpg' },
-      { id: 'series-11', title: 'Lost', description: 'Adventure Drama', year: '2004', rating: '8.3', image: 'https://image.tmdb.org/t/p/w500/ogLZrH4uAxnR0fQ7X9nM6DV6fZQ.jpg' },
+      { id: 'series-11', title: 'Lost', description: 'Adventure Drama', year: '2004', rating: '8.3', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS324-VHaW2F4xiVLiSeJypjjq_WilXGlVeQutDw7k_SM-PvGL9K5ofVnSeqJNahausdapp&s=10' },
       { id: 'series-12', title: 'Prison Break', description: 'Thriller', year: '2005', rating: '8.3', image: 'https://image.tmdb.org/t/p/w500/5E1BhkCgjLBlqx557Z5yzcN0i88.jpg' },
-      { id: 'series-13', title: 'Al Rawabi School for Girls', description: 'Drama', year: '2021', rating: '7.5', image: 'https://image.tmdb.org/t/p/w500/vM2M6M6x6ykBLL8GMDIS9ZhDJW5.jpg' },
-      { id: 'series-14', title: 'Kaboos', description: 'Arabic Series', year: '2024', rating: '7.4', image: '', wikiQuery: 'Kaboos (TV series)' },
-      { id: 'series-15', title: 'Crystal', description: 'Arabic Drama', year: '2023', rating: '7.6', image: '', wikiQuery: 'Crystal (TV series)' },
-      { id: 'series-16', title: 'Al Hayba', description: 'Arabic Drama', year: '2017', rating: '7.8', image: '', wikiQuery: 'Al Hayba' },
-      { id: 'series-17', title: 'Kuruluş: Osman', description: 'Turkish Historical Drama', year: '2019', rating: '7.6', image: '', wikiQuery: 'Kurulus Osman' },
-      { id: 'series-18', title: 'Yalı Çapkını', description: 'Turkish Drama', year: '2022', rating: '7.3', image: '', wikiQuery: 'Yali Capkini' },
-      { id: 'series-19', title: 'Aile', description: 'Turkish Drama', year: '2023', rating: '7.4', image: '', wikiQuery: 'Aile (TV series)' },
-      { id: 'series-20', title: 'Teşkilat', description: 'Turkish Action Drama', year: '2021', rating: '7.2', image: '', wikiQuery: 'Teskilat' },
-      { id: 'series-21', title: 'cukur', description: 'Turkish Crime Drama', year: '2017', rating: '7.7', image: '', wikiQuery: 'Cukur' },
-      { id: 'series-22', title: 'تحت الارض', description: 'Arabic Drama', year: '2024', rating: '7.4', image: '', wikiQuery: 'Taht El Ard' },
-      { id: 'series-23', title: 'حلم اشرف', description: 'Arabic Drama', year: '2024', rating: '7.4', image: '', wikiQuery: 'Helm Ashraf' },
+      { id: 'series-13', title: 'Al Rawabi School for Girls', description: 'Drama', year: '2021', rating: '7.5', image: 'https://m.media-amazon.com/images/M/MV5BMjZiMDkyY2EtY2EyMi00ZTE2LTk4YzktMWZhYWMzNjM5ZjAxXkEyXkFqcGc@._V1_.jpg' },
+      { id: 'series-14', title: 'Kaboos', description: 'Arabic Series', year: '2024', rating: '7.4', image: 'https://m.media-amazon.com/images/M/MV5BNzIyNGQ2NTItOGFlMS00OTY5LTg1YWYtZTgwZTlmODdlYTlhXkEyXkFqcGc@._V1_.jpg' },
+      { id: 'series-15', title: 'Crystal', description: 'Arabic Drama', year: '2023', rating: '7.6', image: 'https://m.media-amazon.com/images/M/MV5BOWYwZjZkZTMtYzIwZC00MjZmLWJlYzAtZjk4MmMwMWNlNGYxXkEyXkFqcGc@._V1_.jpg' },
+      { id: 'series-16', title: 'Al Hayba', description: 'Arabic Drama', year: '2017', rating: '7.8', image: 'https://shahid.mbc.net/mediaObject/2021/Amr/movies/Poster_title_alhayba_5_en/original/Poster_title_alhayba_5_en.jpg' },
+      { id: 'series-18', title: 'Teşkilat', description: 'Turkish Action Drama', year: '2021', rating: '7.2', image: 'https://m.media-amazon.com/images/M/MV5BMGZkYzRjYmEtMDhlNC00ODU5LWFiOWUtYTBkNWNkMzIzNWY4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+      { id: 'series-19', title: 'Çukur', description: 'Turkish Crime Drama', year: '2017', rating: '7.7', image: 'https://cdn-images.dzcdn.net/images/cover/7186ff74fa831b982a3cff3c212240eb/0x1900-000000-80-0-0.jpg' },
+      { id: 'series-20', title: 'تحت الأرض', description: 'Arabic Drama', year: '2024', rating: '7.4', image: 'https://m.media-amazon.com/images/M/MV5BMWZkN2M5NzUtODY0Zi00YzY4LTg4MDAtOWU2MDFjODQ2NGJmXkEyXkFqcGc@._V1_QL75_UY207_CR13,0,140,207_.jpg' },
+      { id: 'series-21', title: 'Ashraf Tek', description: 'Arabic Drama', year: '2024', rating: '7.4', image: 'https://m.media-amazon.com/images/M/MV5BYzI5MjM5NDMtNTFjZC00ZTI0LWJjMWQtZjQyNzdiYWY2ZjUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
     ],
   },
   {
@@ -197,7 +209,7 @@ export function ContentShowcase({ categories }: ContentShowcaseProps) {
           description: item.description || category.name,
           year: item.year || undefined,
           rating: item.rating || undefined,
-          image: item.poster_url || item.thumbnail_url || '',
+          image: getForcedPoster(item.title) || item.poster_url || item.thumbnail_url || '',
         })),
       }
     })
@@ -354,7 +366,7 @@ export function ContentShowcase({ categories }: ContentShowcaseProps) {
                   <img
                     src={resolvedImages[item.id] || item.image || placeholderPoster(item.title)}
                     alt={item.title}
-                    className={`absolute inset-0 h-full w-full ${isChannelsCategory ? 'object-contain p-5' : 'object-cover'}`}
+                    className={`absolute inset-0 h-full w-full ${isChannelsCategory ? 'object-contain p-5' : 'object-cover object-center'}`}
                     loading="lazy"
                     onError={(event) => {
                       const element = event.currentTarget

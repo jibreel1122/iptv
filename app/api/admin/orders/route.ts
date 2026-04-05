@@ -15,6 +15,9 @@ function parseSupabaseError(error: any, fallback: string) {
   if (message.toLowerCase().includes('row-level security') || error?.code === '42501') {
     return 'Supabase permission error (RLS). Please run scripts/init-db.sql in Supabase SQL Editor.'
   }
+  if (message.includes("Could not find the 'status' column of 'orders' in the schema cache")) {
+    return "Supabase is missing orders.status. Run: ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending'; then retry."
+  }
   return message
 }
 

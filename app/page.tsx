@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { ParticleBackground } from '@/components/particle-background'
-import { ThemeSwitcher } from '@/components/theme-switcher'
 import { HeroSection } from '@/components/hero-section'
 import { OffersSection } from '@/components/offers-section'
 import { FeaturesSection } from '@/components/features-section'
@@ -132,10 +131,6 @@ export default async function Home() {
             {word}
           </span>
         ))}
-      </div>
-      
-      <div className="fixed top-20 right-4 z-50">
-        <ThemeSwitcher />
       </div>
 
       <Link href="/about" className="fixed top-20 left-4 z-50 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm text-white hover:bg-black/60">

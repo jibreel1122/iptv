@@ -16,26 +16,66 @@ interface DashboardStats {
   stats: Stats
 }
 
+interface Offer {
+  id: number
+  price: number
+}
+
 export default function AdminDashboard() {
   const [dashStats, setDashStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchDashboardStats()
+    let mounted = true
+
+    const load = async () => {
+      await fetchDashboardStats()
+    }
+
+    void load()
+
+    // Keep stats live in admin dashboard.
+    const interval = setInterval(() => {
+      if (!mounted) return
+      void fetchDashboardStats(false)
+    }, 8000)
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
   }, [])
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = async (showLoader = true) => {
+    if (showLoader) setLoading(true)
     try {
-      const [statsRes, ordersRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/orders'),
+      const [statsRes, ordersRes, offersRes] = await Promise.all([
+        fetch('/api/admin/stats', { cache: 'no-store' }),
+        fetch('/api/admin/orders', { cache: 'no-store' }),
+        fetch('/api/offers', { cache: 'no-store' }),
       ])
 
       const stats = await statsRes.json()
       const orders = await ordersRes.json()
+      const offers = await offersRes.json()
+
+      const offersById: Record<number, number> = {}
+      if (Array.isArray(offers)) {
+        for (const offer of offers as Offer[]) {
+          if (offer && typeof offer.id === 'number') {
+            offersById[offer.id] = Number(offer.price || 0)
+          }
+        }
+      }
 
       const totalRevenue = Array.isArray(orders)
-        ? orders.reduce((sum, order) => sum + (order.offer_price || 0), 0)
+        ? orders
+            .filter((order) => ['active', 'done'].includes(String(order.status || '')))
+            .reduce((sum, order: any) => {
+              const directPrice = Number(order.offer_price || 0)
+              const fallbackPrice = typeof order.offer_id === 'number' ? Number(offersById[order.offer_id] || 0) : 0
+              return sum + (directPrice > 0 ? directPrice : fallbackPrice)
+            }, 0)
         : 0
 
       setDashStats({
@@ -47,7 +87,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error)
     } finally {
-      setLoading(false)
+      if (showLoader) setLoading(false)
     }
   }
 
