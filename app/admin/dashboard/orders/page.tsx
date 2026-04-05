@@ -82,14 +82,21 @@ export default function OrdersPage() {
   const updateStatus = async (id: number, status: string) => {
     setUpdatingId(id)
     try {
+      setErrorMessage('')
       const response = await fetch('/api/admin/orders', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, status }),
       })
-      if (response.ok) {
-        fetchOrders()
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        setErrorMessage(payload?.error || 'تعذر تحديث حالة الطلب')
+        return
       }
+
+      fetchOrders()
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'تعذر تحديث حالة الطلب')
     } finally {
       setUpdatingId(null)
     }

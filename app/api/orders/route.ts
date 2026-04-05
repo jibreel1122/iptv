@@ -3,6 +3,20 @@ import { NextResponse } from 'next/server'
 import { fallbackOffers, fallbackOrders } from '@/lib/fallback-data'
 import { getSupabaseServerClient, hasSupabasePublicConfig } from '@/lib/supabase-server'
 
+function buildOrderSuccessRedirect(request: Request) {
+  const headers = request.headers
+  const forwardedHost = (headers.get('x-forwarded-host') || '').split(',')[0].trim()
+  const host = (forwardedHost || headers.get('host') || '').split(',')[0].trim()
+  const forwardedProto = (headers.get('x-forwarded-proto') || '').split(',')[0].trim()
+  const proto = forwardedProto || 'https'
+
+  if (host && !/localhost|127\.0\.0\.1/i.test(host)) {
+    return new URL(`${proto}://${host}/order?success=1`)
+  }
+
+  return new URL('/order?success=1', request.url)
+}
+
 async function ensureOrdersSchema() {
   if (!hasDatabase) return
   await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS full_name VARCHAR(255)`
@@ -162,7 +176,7 @@ export async function POST(request: Request) {
       }
 
       if (!contentType.includes('application/json')) {
-        return NextResponse.redirect(new URL('/order?success=1', request.url), 303)
+        return NextResponse.redirect(buildOrderSuccessRedirect(request), 303)
       }
 
       return NextResponse.json(data, { status: 201 })
@@ -182,7 +196,7 @@ export async function POST(request: Request) {
       }
       fallbackOrders.unshift(newOrder)
       if (!contentType.includes('application/json')) {
-        return NextResponse.redirect(new URL('/order?success=1', request.url), 303)
+        return NextResponse.redirect(buildOrderSuccessRedirect(request), 303)
       }
       return NextResponse.json(newOrder, { status: 201 })
     }
@@ -196,7 +210,7 @@ export async function POST(request: Request) {
     `
 
     if (!contentType.includes('application/json')) {
-      return NextResponse.redirect(new URL('/order?success=1', request.url), 303)
+      return NextResponse.redirect(buildOrderSuccessRedirect(request), 303)
     }
 
     return NextResponse.json(result[0], { status: 201 })

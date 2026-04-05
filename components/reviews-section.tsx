@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, Quote, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 import { scrollReveal } from '@/lib/animations'
@@ -14,6 +14,21 @@ interface ReviewsSectionProps {
 export function ReviewsSection({ reviews }: ReviewsSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [autoPlay, setAutoPlay] = useState(true)
+  const [reviewName, setReviewName] = useState('')
+  const [reviewText, setReviewText] = useState('')
+  const [reviewRating, setReviewRating] = useState(5)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('')
+  const [submitError, setSubmitError] = useState('')
+
+  const happyCustomersStart = 10
+  const happyCustomersDailyGrowth = 3
+  const happyCustomersStartDate = new Date('2026-04-05T00:00:00Z')
+  const daysElapsed = Math.max(
+    0,
+    Math.floor((Date.now() - happyCustomersStartDate.getTime()) / 86400000)
+  )
+  const happyCustomers = happyCustomersStart + daysElapsed * happyCustomersDailyGrowth
 
   // Auto-rotate reviews
   useEffect(() => {
@@ -32,6 +47,44 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
       setActiveIndex(prev => (prev - 1 + reviews.length) % reviews.length)
     } else {
       setActiveIndex(prev => (prev + 1) % reviews.length)
+    }
+  }
+
+  const submitReview = async (e: FormEvent) => {
+    e.preventDefault()
+    setSubmitMessage('')
+    setSubmitError('')
+
+    if (!reviewName.trim() || !reviewText.trim() || reviewRating < 1 || reviewRating > 5) {
+      setSubmitError('يرجى إدخال الاسم والتقييم والمراجعة بشكل صحيح.')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: reviewName.trim(),
+          rating: reviewRating,
+          text: reviewText.trim(),
+        }),
+      })
+
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        throw new Error(payload?.error || 'تعذر إرسال التقييم')
+      }
+
+      setReviewName('')
+      setReviewText('')
+      setReviewRating(5)
+      setSubmitMessage('شكراً لك! تم إرسال تقييمك بنجاح.')
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'تعذر إرسال التقييم')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -173,7 +226,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
           </div>
           <div className="w-px bg-white/10 hidden sm:block" />
           <div className="text-center">
-            <div className="text-3xl font-bold text-white">10,000+</div>
+            <div className="text-3xl font-bold text-white">{happyCustomers.toLocaleString()}+</div>
             <div className="text-white/50 text-sm mt-2">عملاء سعداء</div>
           </div>
           <div className="w-px bg-white/10 hidden sm:block" />
@@ -181,6 +234,65 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
             <div className="text-3xl font-bold text-white">50+</div>
             <div className="text-white/50 text-sm mt-2">دولة</div>
           </div>
+        </motion.div>
+
+        <motion.div
+          {...scrollReveal}
+          className="mt-16 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-[#0B0033]/60 p-6 md:p-8"
+        >
+          <h3 className="text-2xl font-bold text-white mb-2 text-center">شاركنا رأيك</h3>
+          <p className="text-white/60 text-center mb-6">اكتب تقييمك ليظهر لزوار الموقع بعد المراجعة.</p>
+
+          <form onSubmit={submitReview} className="space-y-4">
+            <input
+              type="text"
+              placeholder="اسمك"
+              value={reviewName}
+              onChange={(e) => setReviewName(e.target.value)}
+              className="w-full rounded-lg bg-black/30 border border-white/20 p-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#7B2EFF]"
+              required
+            />
+
+            <select
+              value={reviewRating}
+              onChange={(e) => setReviewRating(Number(e.target.value))}
+              className="w-full rounded-lg bg-black/30 border border-white/20 p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#7B2EFF]"
+            >
+              <option value={5}>5 نجوم</option>
+              <option value={4}>4 نجوم</option>
+              <option value={3}>3 نجوم</option>
+              <option value={2}>2 نجوم</option>
+              <option value={1}>1 نجمة</option>
+            </select>
+
+            <textarea
+              placeholder="اكتب رأيك بالخدمة"
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              className="w-full min-h-28 rounded-lg bg-black/30 border border-white/20 p-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#7B2EFF]"
+              required
+            />
+
+            {submitMessage && (
+              <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-emerald-100 text-sm">
+                {submitMessage}
+              </div>
+            )}
+
+            {submitError && (
+              <div className="rounded-lg border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-rose-100 text-sm">
+                {submitError}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-[#7B2EFF] to-[#5B1EDF] hover:from-[#8B3EFF] hover:to-[#6B2EEF]"
+            >
+              {isSubmitting ? 'جارٍ الإرسال...' : 'إرسال التقييم'}
+            </Button>
+          </form>
         </motion.div>
       </div>
     </section>

@@ -41,8 +41,7 @@ type ShowcaseCategory = {
   items: ShowcaseItem[]
 }
 
-const placeholderPoster = (title: string) =>
-  `https://placehold.co/600x900/0b0033/e9e5ff?text=${encodeURIComponent(title)}`
+const placeholderPoster = () => '/placeholder.jpg'
 
 const channelLogo = (domain: string) =>
   `https://logo.clearbit.com/${domain}`
@@ -284,7 +283,7 @@ export function ContentShowcase({ categories }: ContentShowcaseProps) {
       id: `placeholder-${idx}`,
       title: 'Content',
       description: 'Updated daily',
-      image: placeholderPoster('Content Library'),
+      image: placeholderPoster(),
     }
   })
 
@@ -368,10 +367,10 @@ export function ContentShowcase({ categories }: ContentShowcaseProps) {
                           return
                         }
                         const domain = channelDomainByTitle[item.title]
-                        element.src = domain ? channelFallbackLogo(domain) : placeholderPoster(item.title)
+                        element.src = domain ? channelFallbackLogo(domain) : placeholderPoster()
                         return
                       }
-                      element.src = placeholderPoster(item.title)
+                      element.src = placeholderPoster()
                     }}
                   />
                   <div className={`absolute inset-0 ${isChannelsCategory ? 'bg-transparent' : 'bg-gradient-to-t from-[#0B0033] via-[#0B0033]/35 to-transparent'}`} />

@@ -8,6 +8,16 @@ async function checkAuth() {
   return isAdminAuthenticated()
 }
 
+const ALLOWED_STATUSES = new Set(['pending', 'active', 'done', 'canceled'])
+
+function parseSupabaseError(error: any, fallback: string) {
+  const message = String(error?.message || fallback)
+  if (message.toLowerCase().includes('row-level security') || error?.code === '42501') {
+    return 'Supabase permission error (RLS). Please run scripts/init-db.sql in Supabase SQL Editor.'
+  }
+  return message
+}
+
 export async function GET() {
   if (!(await checkAuth())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -48,43 +58,53 @@ export async function PUT(request: Request) {
 
   try {
     const { id, status } = await request.json()
+    const parsedId = Number(id)
+    const normalizedStatus = String(status || '').trim()
 
-    if (!id || !status) {
+    if (!parsedId || !normalizedStatus) {
       return NextResponse.json({ error: 'ID and status are required' }, { status: 400 })
+    }
+
+    if (!ALLOWED_STATUSES.has(normalizedStatus)) {
+      return NextResponse.json({ error: 'Invalid order status' }, { status: 400 })
     }
 
     if (!hasDatabase && hasSupabasePublicConfig) {
       const supabase = getSupabaseServerClient()
       const { data, error } = await supabase
         .from('orders')
-        .update({ status })
-        .eq('id', id)
+        .update({ status: normalizedStatus })
+        .eq('id', parsedId)
         .select('*')
         .single()
 
       if (error) {
         console.error('Admin update order error (Supabase):', error)
-        return NextResponse.json({ error: 'Failed to update order' }, { status: 500 })
+        return NextResponse.json({ error: parseSupabaseError(error, 'Failed to update order') }, { status: 500 })
       }
 
       return NextResponse.json(data)
     }
 
     if (!hasDatabase && !hasSupabasePublicConfig) {
-      const order = fallbackOrders.find((o) => o.id === Number(id))
+      const order = fallbackOrders.find((o) => o.id === parsedId)
       if (!order) {
         return NextResponse.json({ error: 'Order not found' }, { status: 404 })
       }
-      order.status = status
+      order.status = normalizedStatus
       return NextResponse.json(order)
     }
 
     const result = await sql`
       UPDATE orders
-      SET status = ${status}
-      WHERE id = ${id}
+      SET status = ${normalizedStatus}
+      WHERE id = ${parsedId}
       RETURNING *
     `
+
+    if (!result[0]) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
 
     return NextResponse.json(result[0])
   } catch (error) {
