@@ -120,13 +120,13 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-white mb-8">لوحة التحكم</h1>
+      <h1 className="text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8">لوحة التحكم</h1>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-8"
       >
         {/* Total Orders */}
         <motion.div
@@ -174,10 +174,10 @@ export default function AdminDashboard() {
       {/* Content Breakdown */}
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-br from-purple-900/20 to-slate-900/20 border border-purple-500/30 rounded-lg p-6"
+        className="bg-gradient-to-br from-purple-900/20 to-slate-900/20 border border-purple-500/30 rounded-lg p-4 md:p-6"
       >
         <h2 className="text-xl font-bold text-white mb-6">تفصيل المحتوى</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           <div className="bg-slate-800/50 rounded-lg p-4">
             <p className="text-gray-400 text-sm mb-2">القنوات المباشرة</p>
             <p className="text-2xl font-bold text-purple-400">{dashStats?.stats.channels || 0}</p>

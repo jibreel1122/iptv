@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 export function TrialPopup() {
   const [open, setOpen] = useState(false)
   const [whatsapp, setWhatsapp] = useState('+970599765211')
-  const [instagram, setInstagram] = useState('https://instagram.com')
+  const [instagram, setInstagram] = useState('https://www.instagram.com/studo_iptv')
 
   useEffect(() => {
     const key = 'studo_trial_popup_seen'
@@ -63,7 +63,7 @@ export function TrialPopup() {
             تواصل عبر واتساب
           </a>
           <a
-            href={instagram || 'https://instagram.com'}
+            href={instagram || 'https://www.instagram.com/studo_iptv'}
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-center py-3 font-semibold"

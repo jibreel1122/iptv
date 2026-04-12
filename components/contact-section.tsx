@@ -16,7 +16,7 @@ interface Offer {
 export function ContactSection() {
   const [fullName, setFullName] = useState('')
   const [whatsappNumber, setWhatsappNumber] = useState('')
-  const [instagramUrl, setInstagramUrl] = useState('https://instagram.com')
+  const [instagramUrl, setInstagramUrl] = useState('https://www.instagram.com/studo_iptv')
   const [selectedOffer, setSelectedOffer] = useState<number | null>(null)
   const [message, setMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -230,7 +230,7 @@ export function ContactSection() {
             تواصل عبر واتساب
           </a>
           <a
-            href={instagramUrl || 'https://instagram.com'}
+            href={instagramUrl || 'https://www.instagram.com/studo_iptv'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-colors"

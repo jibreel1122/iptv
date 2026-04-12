@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Menu, X, LogOut } from 'lucide-react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export default function AdminLayout({
   children,
@@ -13,9 +14,10 @@ export default function AdminLayout({
   const router = useRouter()
   const pathname = usePathname()
   const isLoginPage = pathname === '/admin/login'
+  const isMobile = useIsMobile()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (isLoginPage) {
@@ -24,6 +26,10 @@ export default function AdminLayout({
     }
     checkAuth()
   }, [isLoginPage])
+
+  useEffect(() => {
+    setSidebarOpen(!isMobile)
+  }, [isMobile])
 
   const checkAuth = async () => {
     try {
@@ -77,18 +83,28 @@ export default function AdminLayout({
   ]
 
   return (
-    <div className="flex h-screen bg-slate-950">
+    <div className="flex h-screen bg-slate-950 overflow-hidden">
+      {isMobile && sidebarOpen && (
+        <button
+          aria-label="إغلاق القائمة"
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/60"
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={`${
-          sidebarOpen ? 'w-64' : 'w-20'
-        } bg-slate-900 border-r border-purple-500/20 transition-all duration-300 flex flex-col`}
+          sidebarOpen ? 'translate-x-0' : 'translate-x-full'
+        } fixed top-0 right-0 z-40 h-full w-72 max-w-[84vw] bg-slate-900 border-l border-purple-500/20 transition-transform duration-300 flex flex-col md:static md:translate-x-0 md:z-auto ${
+          sidebarOpen ? 'md:w-64' : 'md:w-20'
+        }`}
       >
         {/* Logo */}
         <div className="p-4 border-b border-purple-500/20">
           <Link href="/admin/dashboard" className="flex items-center gap-3 text-xl font-bold text-white">
             <img
-              src="/logo.png"
+              src="/logo.jpg"
               alt="Studo Logo"
               className="w-9 h-9 rounded-lg object-cover"
               onError={(event) => {
@@ -108,6 +124,9 @@ export default function AdminLayout({
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => {
+                if (isMobile) setSidebarOpen(false)
+              }}
               className="flex items-center gap-4 px-4 py-2 rounded-lg hover:bg-purple-500/10 text-gray-300 hover:text-white transition text-sm"
             >
               <span className="w-5 h-5 bg-purple-500/50 rounded"></span>
@@ -131,10 +150,11 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="bg-slate-900 border-b border-purple-500/20 px-6 py-4 flex items-center justify-between">
+        <header className="bg-slate-900 border-b border-purple-500/20 px-4 md:px-6 py-4 flex items-center justify-between">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-gray-400 hover:text-white transition"
+            aria-label={sidebarOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
           >
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -147,7 +167,7 @@ export default function AdminLayout({
 
         {/* Content */}
         <main className="flex-1 overflow-auto">
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             {children}
           </div>
         </main>

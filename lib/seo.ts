@@ -7,9 +7,9 @@ export const generateStructuredData = () => {
     name: 'Studo IPTV',
     description: 'Premium IPTV streaming service with unlimited channels, movies, and series',
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    logo: `${baseUrl}/logo.jpg`,
     sameAs: [
-      'https://instagram.com/studo-iptv',
+      'https://www.instagram.com/studo_iptv',
       'https://facebook.com/studo-iptv',
     ],
     contactPoint: {

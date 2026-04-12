@@ -20,7 +20,7 @@ export function HeroSection({ settings, stats, onOrderClick }: HeroSectionProps)
   const heroSubtitle = settings.hero_subtitle || 'شاهد آلاف القنوات والأفلام والمسلسلات بجودة 4K وبدون تقطيع'
   const ctaText = settings.hero_cta_text || 'اطلب الآن'
   const brandName = settings.brand_name || 'Studo'
-  const logoSrc = settings.brand_logo || '/logo.png'
+  const logoSrc = settings.brand_logo || '/logo.jpg'
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">

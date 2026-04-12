@@ -31,7 +31,7 @@ export function getAutoGrowingStats(base: Stats | null) {
   let seriesInc = 0
 
   for (let day = 1; day <= daysElapsed; day += 1) {
-    let remaining = 40
+    let remaining = 7
     const seedBase = sourceDay.getTime() / 86400000 + day
 
     const c = Math.floor(seededRandom(seedBase + 11) * (remaining + 1))

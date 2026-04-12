@@ -41,11 +41,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/logo.png', type: 'image/png', sizes: '32x32' },
-      { url: '/logo.png', type: 'image/png', sizes: '192x192' },
+      { url: '/logo.jpg', type: 'image/jpeg', sizes: '32x32' },
+      { url: '/logo.jpg', type: 'image/jpeg', sizes: '192x192' },
     ],
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
   },
 }
 

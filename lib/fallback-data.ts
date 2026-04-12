@@ -15,7 +15,7 @@ export const fallbackSettingsRows: Setting[] = [
   { id: 2, key: 'hero_subtitle', value: 'شاهد آلاف القنوات والأفلام والمسلسلات بجودة 4K', type: 'textarea', label: 'Hero Subtitle', category: 'hero', updated_at: now },
   { id: 3, key: 'hero_cta_text', value: 'اطلب الآن', type: 'text', label: 'Hero CTA', category: 'hero', updated_at: now },
   { id: 4, key: 'whatsapp_number', value: '+970599765211', type: 'text', label: 'WhatsApp', category: 'contact', updated_at: now },
-  { id: 5, key: 'social_instagram', value: 'https://instagram.com', type: 'text', label: 'Instagram', category: 'social', updated_at: now },
+  { id: 5, key: 'social_instagram', value: 'https://www.instagram.com/studo_iptv', type: 'text', label: 'Instagram', category: 'social', updated_at: now },
   { id: 6, key: 'brand_name', value: 'Studo', type: 'text', label: 'Brand', category: 'branding', updated_at: now },
 ]
 
